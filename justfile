@@ -28,7 +28,7 @@ test: dev
     uv run pytest tests/ -v --ignore=tests/test_benches.py
 
 bench: dev
-    uv run pytest tests/test_benches.py
+    uv run pytest --benchmark-min-time=0.5 tests/test_benches.py
 
 build:
     uv run maturin build --release

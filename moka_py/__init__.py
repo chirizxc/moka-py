@@ -1,4 +1,5 @@
 import asyncio as _asyncio
+import inspect as _inspect
 from functools import _make_key
 from functools import wraps as _wraps
 from typing import Any as _Any
@@ -30,7 +31,7 @@ def cached(
     empty = object()
 
     def dec(fn):
-        if _asyncio.iscoroutinefunction(fn):
+        if _inspect.iscoroutinefunction(fn):
 
             @_wraps(fn)
             async def inner(*args, **kwargs):
