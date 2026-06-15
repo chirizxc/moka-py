@@ -4,7 +4,7 @@ from functools import _make_key
 from functools import wraps as _wraps
 from typing import Any as _Any
 
-from .moka_py import _VERSION, Moka
+from ._moka_py import _VERSION, Moka
 
 __all__ = ["VERSION", "Moka", "cached"]
 

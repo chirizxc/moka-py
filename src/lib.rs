@@ -2,7 +2,7 @@
 #[global_allocator]
 static GLOBAL_ALLOCATOR: mimalloc::MiMalloc = mimalloc::MiMalloc;
 
-#[pyo3::pymodule]
+#[pyo3::pymodule(name = "_moka_py")]
 mod moka_py {
     use std::{
         hash::{Hash, Hasher},
