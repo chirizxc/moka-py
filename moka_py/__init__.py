@@ -5,11 +5,11 @@ from functools import wraps as _wraps
 from typing import Any as _Any
 
 from .moka_py import Moka
-from .moka_py import get_version as _get_version
+from .moka_py import _VERSION
 
 __all__ = ["VERSION", "Moka", "cached"]
 
-VERSION = _get_version()
+VERSION = _VERSION
 
 
 def cached(
