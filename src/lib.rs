@@ -39,10 +39,10 @@ mod moka_py {
             }
             self.py_hash == other.py_hash
                 && Python::attach(|py| {
-                let lhs = self.obj.bind_borrowed(py);
-                let rhs = other.obj.bind_borrowed(py);
-                lhs.eq(rhs).unwrap_or_default()
-            })
+                    let lhs = self.obj.bind_borrowed(py);
+                    let rhs = other.obj.bind_borrowed(py);
+                    lhs.eq(rhs).unwrap_or_default()
+                })
         }
     }
 
@@ -292,8 +292,8 @@ mod moka_py {
                     })
                 })
             })
-                .map(|v| v.value.clone_ref(py))
-                .map_err(|e| e.clone_ref(py))
+            .map(|v| v.value.clone_ref(py))
+            .map_err(|e| e.clone_ref(py))
         }
 
         #[pyo3(signature = (key, default=None))]
