@@ -229,7 +229,7 @@ mod moka_py {
             cls: &Bound<'_, PyType>,
             _key: &Bound<'_, PyAny>,
         ) -> PyResult<Py<PyAny>> {
-            Ok(Py::from(cls.clone().unbind()))
+            Ok(cls.clone().into_any().unbind())
         }
 
         #[pyo3(signature = (key, value, ttl=None, tti=None))]
