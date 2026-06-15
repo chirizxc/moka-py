@@ -35,7 +35,7 @@ jobs:
         with:
           lookup-only: false # zizmor: ignore[cache-poisoning]
 
-      - run: cargo fmt-nightly --check
+      - run: cargo fmt -- --check
 
   cargo-clippy:
     name: "cargo clippy"
@@ -54,7 +54,7 @@ jobs:
         with:
           lookup-only: false # zizmor: ignore[cache-poisoning]
 
-      - run: cargo clippy --all-targets
+      - run: cargo clippy --all-targets --all-features -- -D warnings -W clippy::style -D clippy::perf
 
   tests:
     uses: ./.github/workflows/tests.yaml
