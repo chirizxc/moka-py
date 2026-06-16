@@ -87,7 +87,7 @@ ignore = [
 "tests/**/*.py" = [
     "S101", # asserts are fine in tests
     "S311", # non-crypto randomness in tests
-    "D", # ignore docstring requirements in tests
+    "D",    # ignore docstring requirements in tests
 ]
 "**/__init__.py" = [
     "D104", # package-level docstring optional
