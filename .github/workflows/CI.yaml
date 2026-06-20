@@ -1,4 +1,4 @@
-name: CI
+name: "CI"
 
 on:
   push:
@@ -23,17 +23,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
-      - name: "Install Rust + rustfmt"
-        run: rustup toolchain install stable --component rustfmt
-
-      - uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
-        if: github.ref_type != 'tag'
+      - uses: dtolnay/rust-toolchain@stable # zizmor: ignore[unpinned-uses]
         with:
-          lookup-only: false # zizmor: ignore[cache-poisoning]
+          components: rustfmt
 
       - run: cargo fmt -- --check
 
@@ -42,26 +38,27 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
-      - name: "Install Rust + clippy"
-        run: rustup toolchain install stable --component clippy
-
       - uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
-        if: github.ref_type != 'tag'
+        if: github.event_name == 'pull_request'
         with:
           lookup-only: false # zizmor: ignore[cache-poisoning]
+
+      - uses: dtolnay/rust-toolchain@stable # zizmor: ignore[unpinned-uses]
+        with:
+          components: clippy
 
       - run: cargo clippy --all-targets --all-features -- -D warnings -W clippy::style -D clippy::perf
 
   tests:
     uses: ./.github/workflows/tests.yaml
 
-  linux:
+  manylinux:
     needs: [ tests, cargo-fmt, cargo-clippy ]
-    uses: ./.github/workflows/linux.yaml
+    uses: ./.github/workflows/manylinux.yaml
 
   musllinux:
     needs: [ tests, cargo-fmt, cargo-clippy ]
@@ -87,7 +84,7 @@ jobs:
     name: "build sdist"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
@@ -106,8 +103,7 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    if: ${{ github.ref_type == 'tag' || github.event_name == 'workflow_dispatch' }}
-    needs: [linux, musllinux, windows, macos, wasm, android, build-sdist]
+    needs: [manylinux, musllinux, windows, macos, wasm, android, build-sdist]
     permissions:
       # Use to sign the release artifacts
       id-token: write
@@ -124,10 +120,12 @@ jobs:
           subject-path: "wheels-*/*"
 
       - name: "Install uv"
-        if: ${{ github.ref_type == 'tag' }}
         uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
         with:
           enable-cache: false
+
+      - name: "Validate PyPI publication"
+        run: uv publish 'wheels-*/*' --dry-run
 
       - name: "Publish to PyPI"
         if: ${{ github.ref_type == 'tag' }}

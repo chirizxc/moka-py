@@ -20,27 +20,24 @@ jobs:
           - {
             # AMD64
             runner: windows-latest,
-            target: x64,
-            python-arch: x64,
+            target: x86_64-pc-windows-msvc,
             interpreter: *interpreters,
           }
           - {
-            # x86
+            # x86 (32-bit)
             runner: windows-latest,
-            target: x86,
-            python-arch: x86,
+            target: i686-pc-windows-msvc,
             interpreter: *interpreters_without_pypy,
           }
           - {
             # ARM64
             runner: windows-11-vs2026-arm,
-            target: aarch64,
-            python-arch: arm64,
+            target: aarch64-pc-windows-msvc,
             interpreter: *interpreters_without_pypy,
           }
 
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
@@ -54,7 +51,7 @@ jobs:
         with:
           target: ${{ matrix.platform.target }}
           sccache: ${{ github.event_name == 'pull_request' }}
-          args: >
+          args: >-
             --release
             --out dist
             --interpreter ${{ matrix.platform.interpreter }}
